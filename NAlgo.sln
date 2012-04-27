@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAlgo", "NAlgo\NAlgo.csproj", "{AD7200FE-53BE-48C2-AE6A-F60D1C0164E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAlgo.Tests", "NAlgo.Tests\NAlgo.Tests.csproj", "{99C349DE-2B77-4F4C-84D6-3C72FC874CEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD7200FE-53BE-48C2-AE6A-F60D1C0164E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD7200FE-53BE-48C2-AE6A-F60D1C0164E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD7200FE-53BE-48C2-AE6A-F60D1C0164E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD7200FE-53BE-48C2-AE6A-F60D1C0164E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99C349DE-2B77-4F4C-84D6-3C72FC874CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99C349DE-2B77-4F4C-84D6-3C72FC874CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99C349DE-2B77-4F4C-84D6-3C72FC874CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99C349DE-2B77-4F4C-84D6-3C72FC874CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

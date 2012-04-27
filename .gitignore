@@ -1,6 +1,14 @@
-# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+output
+*.Cache
+*.cache
+*.ncb
+TestResult.xml
+coverage.*
+_ReSharper*
+*.marcus
+*.bak
 bin
 obj
-
-# mstest test results
-TestResults
+*.vsdoc
+*.XML
+out
