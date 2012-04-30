@@ -3,12 +3,9 @@ output
 *.cache
 *.ncb
 TestResult.xml
-coverage.*
 _ReSharper*
-*.marcus
+*.suo
 *.bak
 bin
 obj
 *.vsdoc
-*.XML
-out

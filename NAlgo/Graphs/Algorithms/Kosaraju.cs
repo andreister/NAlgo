@@ -22,7 +22,7 @@ namespace NAlgo.Graphs.Algorithms
 		/// <summary>
 		/// Creates a new algorithm instance.
 		/// </summary>
-		internal Kosaraju(Dictionary<T, DirectedGraphNode<T>> graph)
+		internal Kosaraju(Dictionary<T, DigraphNode<T>> graph)
 		{
 			_nodes = graph.ToDictionary(x => x.Key, x => new KosarajuNode(x.Value));
 		}
@@ -32,7 +32,7 @@ namespace NAlgo.Graphs.Algorithms
 		/// where the keys are the leader nodes, and the values are the nodes 
 		/// in the corresponding connected component.
 		/// </summary>
-		internal Dictionary<DirectedGraphNode<T>, List<DirectedGraphNode<T>>> GetConnectedComponents()
+		internal Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GetConnectedComponents()
 		{
 			_currentTraversalOrder = _nodes.Count;
 			
@@ -77,13 +77,13 @@ namespace NAlgo.Graphs.Algorithms
 			});
 		}
 
-		private Dictionary<DirectedGraphNode<T>, List<DirectedGraphNode<T>>> GroupNodesByLeader()
+		private Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GroupNodesByLeader()
 		{
-			var result = new Dictionary<DirectedGraphNode<T>, List<DirectedGraphNode<T>>>();
+			var result = new Dictionary<DigraphNode<T>, List<DigraphNode<T>>>();
 			foreach (var node in _nodes.Values) {
 				var leader = node.Leader;
 				if (!result.ContainsKey(leader)) {
-					result.Add(leader, new List<DirectedGraphNode<T>>());
+					result.Add(leader, new List<DigraphNode<T>>());
 				}
 				result[leader].Add(node);
 			}
@@ -96,13 +96,12 @@ namespace NAlgo.Graphs.Algorithms
 			Forward = 1
 		}
 
-		private class KosarajuNode : DirectedGraphNode<T>
+		private class KosarajuNode : DigraphNode<T>
 		{
-			internal bool IsExplored { get; set; }
 			internal int TraversalOrder { get; set; }
 			internal KosarajuNode Leader { get; set; }
 
-			internal KosarajuNode(DirectedGraphNode<T> node)
+			internal KosarajuNode(DigraphNode<T> node)
 				: base(node.Id)
 			{
 				TraversalOrder = ConvertToInt(node.Id);
