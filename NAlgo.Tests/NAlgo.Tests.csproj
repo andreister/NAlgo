@@ -48,6 +48,7 @@
     <Compile Include="Graphs\DepthFirstSearchTests.cs" />
     <Compile Include="Graphs\Extensions\GraphExtensions.cs" />
     <Compile Include="Graphs\KosarajuTests.cs" />
+    <Compile Include="Graphs\ShortestPathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

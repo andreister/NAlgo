@@ -8,17 +8,12 @@ namespace NAlgo.Graphs.Algorithms
 	/// </summary>
 	public class BreadthFirstSearch<T>
 	{
-		private readonly Dictionary<T, GraphNode<T>> _graph;
+		public bool Stop { get; set; }
 
-		public BreadthFirstSearch(Dictionary<T, GraphNode<T>> graph)
+		public void Run(Node<T> startNode, Func<Node<T>, IEnumerable<Node<T>>> getUnexploredChildren, Action<Node<T>> process)
 		{
-			_graph = graph;
-		}
-
-		public void Run(GraphNode<T> root, Action<Node<T>> process)
-		{
-			var queue = new Queue<GraphNode<T>>();
-			queue.Enqueue(root);
+			var queue = new Queue<Node<T>>();
+			queue.Enqueue(startNode);
 
 			while (queue.Count != 0) {
 				var node = queue.Dequeue();
@@ -26,13 +21,15 @@ namespace NAlgo.Graphs.Algorithms
 					continue;
 				}
 
-				process(node);
+				foreach (var child in getUnexploredChildren(node)) {
+					queue.Enqueue(child);
+				}
+
 				node.IsExplored = true;
-				foreach (var nodeId in node.Edges) {
-					var adjacentNode = _graph[nodeId];
-					if (!adjacentNode.IsExplored) {
-						queue.Enqueue(adjacentNode);
-					}
+				process(node);
+
+				if(Stop) {
+					break;
 				}
 			}
 		}

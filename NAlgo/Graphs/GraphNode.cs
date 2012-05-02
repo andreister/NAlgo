@@ -7,19 +7,19 @@ namespace NAlgo.Graphs
 	/// </summary>
 	public class GraphNode<T> : Node<T>
 	{
-		internal List<T> Edges { get; private set; }
+		internal List<T> Adjacent { get; private set; }
 
 		/// <summary>
 		/// Creates a new node.
 		/// </summary>
 		internal GraphNode(T id) : base(id)
 		{
-			Edges = new List<T>();
+			Adjacent = new List<T>();
 		}
 
 		public override string ToString()
 		{
-			return "[" + Id + ": +(" + string.Join(",", Edges) + ")]";
+			return "[" + Id + ": +(" + string.Join(",", Adjacent) + ")]";
 		}
 	}
 }

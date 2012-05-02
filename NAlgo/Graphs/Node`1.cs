@@ -23,6 +23,7 @@
 		protected Node(T id)
 		{
 			Id = id;
+			IsExplored = false;
 		}
 	}
 }

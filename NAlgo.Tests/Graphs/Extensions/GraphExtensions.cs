@@ -36,7 +36,7 @@ namespace NAlgo.Tests.Graphs.Extensions
 					throw new ArgumentException("Invalid input for an edge: " + edge);
 				}
 
-				AddNode(graph, fromId).Edges.Add(toId);
+				AddNode(graph, fromId).Adjacent.Add(toId);
 			}
 			return graph;
 		}

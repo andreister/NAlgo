@@ -43,6 +43,7 @@
     <Compile Include="Graphs\Algorithms\BreadthFirstSearch.cs" />
     <Compile Include="Graphs\Algorithms\DepthFirstSearch.cs" />
     <Compile Include="Graphs\Algorithms\Kosaraju.cs" />
+    <Compile Include="Graphs\Algorithms\ShortestPath.cs" />
     <Compile Include="Graphs\DigraphNode.cs" />
     <Compile Include="Graphs\GraphNode.cs" />
     <Compile Include="Graphs\Node`1.cs" />

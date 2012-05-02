@@ -10,31 +10,31 @@ namespace NAlgo.Graphs.Algorithms
 	/// 
 	/// * the first pass is done on a reversed graph, with the goal to
 	///   calculate the "magic" traversal ordering for the second pass
-	/// * the second pass is done on a "normal" (unreversed) graph,
-	///   iterating over the nodes accordingly to the above ordering.
+	/// * the second pass is done against an unreversed graph, iterating 
+	///   over the nodes accordingly to the previously found ordering.
 	/// </summary>
-	internal class Kosaraju<T>
+	public class Kosaraju<T>
 	{
-		private readonly Dictionary<T, KosarajuNode> _nodes;
+		private readonly Dictionary<T, KosarajuNode> _graph;
 		private int _currentTraversalOrder;
 		private KosarajuNode _currentLeader;
 
 		/// <summary>
 		/// Creates a new algorithm instance.
 		/// </summary>
-		internal Kosaraju(Dictionary<T, DigraphNode<T>> graph)
+		public Kosaraju(Dictionary<T, DigraphNode<T>> graph)
 		{
-			_nodes = graph.ToDictionary(x => x.Key, x => new KosarajuNode(x.Value));
+			_graph = graph.ToDictionary(x => x.Key, x => new KosarajuNode(x.Value));
 		}
 
 		/// <summary>
-		/// Computes the strongly connected components, and returns a map 
-		/// where the keys are the leader nodes, and the values are the nodes 
+		/// Computes the strongly connected components, and returns a map
+		/// where the keys are the leader nodes, and the values are the nodes
 		/// in the corresponding connected component.
 		/// </summary>
-		internal Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GetConnectedComponents()
+		public Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GetConnectedComponents()
 		{
-			_currentTraversalOrder = _nodes.Count;
+			_currentTraversalOrder = _graph.Count;
 			
 			TraverseGraph(Direction.Reverse);
 			TraverseGraph(Direction.Forward);
@@ -47,11 +47,11 @@ namespace NAlgo.Graphs.Algorithms
 		/// </summary>
 		private void TraverseGraph(Direction direction)
 		{
-			foreach (var node in _nodes.Values) {
+			foreach (var node in _graph.Values) {
 				node.IsExplored = false;
 			}
 
-			var nodes = _nodes.Values.OrderBy(x => x.TraversalOrder).Where(x => !x.IsExplored);
+			var nodes = _graph.Values.OrderBy(x => x.TraversalOrder).Where(x => !x.IsExplored);
 			foreach (var node in nodes) {
 				_currentLeader = node;
 				DepthFirstSearch(node, direction);
@@ -60,27 +60,24 @@ namespace NAlgo.Graphs.Algorithms
 
 		private void DepthFirstSearch(KosarajuNode root, Direction direction)
 		{
-			root.IsExplored = true;
-
 			var search = new DepthFirstSearch<T>();
-			search.Run(root, (stack, x) => {
+			search.Run(root, x => GetUnexploredChildren(x, direction), (x) => {
 				var node = (KosarajuNode)x; 
-				var unexploredChild = node.GetUnexploredChildren(_nodes, direction).FirstOrDefault();
-				if (unexploredChild != null) {
-					unexploredChild.IsExplored = true;
-					stack.Push(node);				//push the node because there may be more unexplored children
-					stack.Push(unexploredChild);	//push the unexplored child to DFS it on the next step
-					return;
-				}
 				node.Leader = _currentLeader;
 				node.TraversalOrder = _currentTraversalOrder--;
 			});
 		}
 
+		private IEnumerable<Node<T>> GetUnexploredChildren(Node<T> node, Direction direction)
+		{
+			var nodes = (direction == Direction.Reverse) ? ((KosarajuNode)node).Incoming : ((KosarajuNode)node).Outgoing;
+			return nodes.Select(x => _graph[x]).Where(x => !x.IsExplored);
+		}
+
 		private Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GroupNodesByLeader()
 		{
 			var result = new Dictionary<DigraphNode<T>, List<DigraphNode<T>>>();
-			foreach (var node in _nodes.Values) {
+			foreach (var node in _graph.Values) {
 				var leader = node.Leader;
 				if (!result.ContainsKey(leader)) {
 					result.Add(leader, new List<DigraphNode<T>>());
@@ -104,9 +101,8 @@ namespace NAlgo.Graphs.Algorithms
 			internal KosarajuNode(DigraphNode<T> node)
 				: base(node.Id)
 			{
-				TraversalOrder = ConvertToInt(node.Id);
-				IsExplored = false;
 				Leader = null;
+				TraversalOrder = ConvertToInt(node.Id);
 				Incoming.AddRange(node.Incoming);
 				Outgoing.AddRange(node.Outgoing);
 			}

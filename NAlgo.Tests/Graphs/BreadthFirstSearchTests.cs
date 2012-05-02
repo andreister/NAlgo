@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using NAlgo.Graphs;
 using NAlgo.Graphs.Algorithms;
 using NAlgo.Tests.Graphs.Extensions;
 using NUnit.Framework;
+using System.Linq;
 
 namespace NAlgo.Tests.Graphs
 {
 	[TestFixture]
-	public class BreadthFirstTests
+	public class BreadthFirstSearchTests
 	{
 		[Test, TestCaseSource("Graphs")]
 		public void TraverseGraph(string graphText, string expectedTraversal)
@@ -14,13 +16,19 @@ namespace NAlgo.Tests.Graphs
 			var graph = graphText.ToGraph<string>();
 			
 			string traversal = "";
-			var algo = new BreadthFirstSearch<string>(graph);
-			algo.Run(graph["start"], node => {
-				traversal += node.Id + ",";
+			var algo = new BreadthFirstSearch<string>();
+			algo.Run(graph["start"], (x) => GetUnexploredChildren(x, graph), (x) => {
+				traversal += x.Id + ",";
 			});
 
 			traversal = traversal.TrimEnd(new[] { ',' });
 			Assert.That(traversal, Is.EqualTo(expectedTraversal), "Search path was not correct.");
+		}
+
+		private IEnumerable<Node<string>> GetUnexploredChildren(Node<string> node, Dictionary<string, GraphNode<string>> graph)
+		{
+			var nodes = ((GraphNode<string>)node).Adjacent;
+			return nodes.Select(x => graph[x]).Where(xx => !xx.IsExplored);
 		}
 
 		public IEnumerable<TestCaseData> Graphs
