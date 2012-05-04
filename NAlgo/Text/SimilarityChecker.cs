@@ -37,12 +37,14 @@ namespace NAlgo.Text
 
 		private IEnumerable<string> GetLetterChunksInWord(string word)
 		{
-			if (word.Length <= 2) {
+			var chunkSize = 2;
+
+			if (word.Length <= chunkSize) {
 				yield return word;
 				yield break;
 			}
 			for (int i = 0; i < word.Length - 1; i++) {
-				yield return word.Substring(i, 2);
+				yield return word.Substring(i, chunkSize);
 			}
 		}
 
