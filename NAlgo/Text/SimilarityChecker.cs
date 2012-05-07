@@ -6,15 +6,27 @@ namespace NAlgo.Text
 {
 	/// <summary>
 	/// A ranking string comparison algorithm. Calculates a "distance"
-	/// between the two strings via character pair similarity.
+	/// between the two strings via character chunks similarity.
 	/// 
 	/// Inspired by Simon White http://www.catalysoft.com/articles/StrikeAMatch.html
 	/// </summary>
 	public class SimilarityChecker
 	{
+		private readonly int _chunkSize;
+
+		/// <summary>
+		/// Creates a new checker.
+		/// </summary>
+		/// <param name="chunkSize">Size of letter chunks we compare. By default
+		/// is 2, so we go through all letter pairs.</param>
+		public SimilarityChecker(int chunkSize = 2)
+		{
+			_chunkSize = chunkSize;
+		}
+
 		/// <summary>
 		/// Calculates the distance between the two strings by checking
-		/// how many adjacent character pairs are contained in both strings.
+		/// how many adjacent letter chgaunks are contained in both strings.
 		/// Returns a percentage, where 1 means the strings are identical.
 		/// </summary>
 		/// <param name="from">First string.</param>
@@ -37,14 +49,12 @@ namespace NAlgo.Text
 
 		private IEnumerable<string> GetLetterChunksInWord(string word)
 		{
-			var chunkSize = 2;
-
-			if (word.Length <= chunkSize) {
+			if (word.Length <= _chunkSize) {
 				yield return word;
 				yield break;
 			}
 			for (int i = 0; i < word.Length - 1; i++) {
-				yield return word.Substring(i, chunkSize);
+				yield return word.Substring(i, _chunkSize);
 			}
 		}
 
