@@ -9,51 +9,36 @@ namespace NAlgo.Graphs.Algorithms
 	/// Breaks the graph into layers and calculate distance as the
 	/// number of layers from the [Start] to the [End] node.
 	/// </summary>
-	internal class ShortestPath<T>
+	/// <typeparam name="TId">Type of node identifier.</typeparam>
+	internal class ShortestPath<TId>
 	{
-		private readonly Dictionary<T, LayeredNode> _graph;
+		private readonly Dictionary<TId, GraphNode<TId, int>> _graph;
 
 		/// <summary>
 		/// Creates a new algorithm instance.
 		/// </summary>
-		internal ShortestPath(Dictionary<T, GraphNode<T>> graph)
+		internal ShortestPath(Dictionary<TId, GraphNode<TId, int>> graph)
 		{
-			_graph = graph.ToDictionary(x => x.Key, x => new LayeredNode(x.Value));
+			_graph = graph.ToDictionary(x => x.Key, x => x.Value);
 		}
 
-		internal int ComputeDistance(GraphNode<T> from, GraphNode<T> to)
+		internal int ComputeDistance(GraphNode<TId, int> from, GraphNode<TId, int> to)
 		{
-			var algo = new BreadthFirstSearch<T>();
+			var algo = new BreadthFirstSearch<TId, int>();
 
-			_graph[from.Id].Layer = 0;
-			algo.Run(_graph[from.Id], GetUnexploredChildren, (node) => {
-				foreach (LayeredNode child in GetUnexploredChildren(node)) {
-					child.Layer = ((LayeredNode)node).Layer + 1;
+			var startNode = _graph[from.Id];
+			startNode.Value = 0;
+
+			algo.Run(startNode, x => {
+				foreach (GraphNode<TId, int> child in x.GetUnexploredChildren()) {
+					child.Value = x.Value + 1;
 					if (child.Id.Equals(to.Id)) {
 						algo.Stop = true;
 					}
 				}
 			});
 
-			return _graph[to.Id].Layer;
-		}
-
-		private IEnumerable<Node<T>> GetUnexploredChildren(Node<T> node)
-		{
-			var nodes = ((GraphNode<T>)node).Adjacent;
-			return nodes.Select(x => _graph[x]).Where(xx => !xx.IsExplored);
-		}
-
-		private class LayeredNode : GraphNode<T>
-		{
-			internal int Layer { get; set; }
-
-			internal LayeredNode(GraphNode<T> node, int layer = int.MaxValue)
-				: base(node.Id)
-			{
-				Layer = layer;
-				Adjacent.AddRange(node.Adjacent);
-			}
+			return _graph[to.Id].Value;
 		}
 	}
 }

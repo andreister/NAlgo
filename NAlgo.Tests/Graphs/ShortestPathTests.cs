@@ -11,7 +11,7 @@ namespace NAlgo.Tests.Graphs
 		[Test, TestCaseSource("Graphs")]
 		public void ComputeDistance(string graphText, int expectedDistance)
 		{
-			var graph = graphText.ToGraph<string>();
+			var graph = graphText.ToGraph<string, int>();
 
 			var algo = new ShortestPath<string>(graph);
 			var distance = algo.ComputeDistance(graph["start"], graph["end"]);

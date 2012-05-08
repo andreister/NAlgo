@@ -6,13 +6,15 @@ namespace NAlgo.Graphs.Algorithms
 	/// <summary>
 	/// Implements a queue based BFS algorithm.
 	/// </summary>
-	public class BreadthFirstSearch<T>
+	/// <typeparam name="TId">Type of node identifier.</typeparam>
+	/// <typeparam name="TValue">Type of the data associated with the node.</typeparam>
+	public class BreadthFirstSearch<TId, TValue>
 	{
 		public bool Stop { get; set; }
 
-		public void Run(Node<T> startNode, Func<Node<T>, IEnumerable<Node<T>>> getUnexploredChildren, Action<Node<T>> process)
+		public void Run(Node<TId, TValue> startNode, Action<Node<TId, TValue>> process)
 		{
-			var queue = new Queue<Node<T>>();
+			var queue = new Queue<Node<TId, TValue>>();
 			queue.Enqueue(startNode);
 
 			while (queue.Count != 0) {
@@ -21,7 +23,7 @@ namespace NAlgo.Graphs.Algorithms
 					continue;
 				}
 
-				foreach (var child in getUnexploredChildren(node)) {
+				foreach (var child in node.GetUnexploredChildren()) {
 					queue.Enqueue(child);
 				}
 

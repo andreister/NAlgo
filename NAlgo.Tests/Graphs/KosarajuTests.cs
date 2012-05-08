@@ -12,7 +12,7 @@ namespace NAlgo.Tests.Graphs
 		[Test, TestCaseSource("Graphs")]
 		public void ComputeStronglyConnectedComponents(string graphText, int[] expectedSizes)
 		{
-			var graph = graphText.ToDirectedGraph<int>();
+			var graph = graphText.ToDirectedGraph<int, object>();
 			var algo = new Kosaraju<int>(graph);
 			var components = algo.GetConnectedComponents().OrderByDescending(x => x.Value.Count).ToList();
 

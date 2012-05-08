@@ -13,22 +13,16 @@ namespace NAlgo.Tests.Graphs
 		[Test, TestCaseSource("Graphs")]
 		public void TraverseGraph(string graphText, string expectedTraversal)
 		{
-			var graph = graphText.ToGraph<string>();
+			var graph = graphText.ToGraph<string, object>();
 
 			string traversal = "";
-			var algo = new DepthFirstSearch<string>();
-			algo.Run(graph["start"], (x) => GetUnexploredChildren(x, graph), (x) => {
+			var algo = new DepthFirstSearch<string, object>();
+			algo.Run(graph["start"], x => {
 				traversal += x.Id + ",";
 			});
 
 			traversal = traversal.TrimEnd(new[] { ',' });
 			Assert.That(traversal, Is.EqualTo(expectedTraversal), "Search path was not correct.");
-		}
-
-		private IEnumerable<Node<string>> GetUnexploredChildren(Node<string> node, Dictionary<string, GraphNode<string>> graph)
-		{
-			var nodes = ((GraphNode<string>)node).Adjacent;
-			return nodes.Select(x => graph[x]).Where(xx => !xx.IsExplored);
 		}
 
 		public IEnumerable<TestCaseData> Graphs

@@ -13,18 +13,22 @@ namespace NAlgo.Graphs.Algorithms
 	/// * the second pass is done against an unreversed graph, iterating 
 	///   over the nodes accordingly to the previously found ordering.
 	/// </summary>
-	public class Kosaraju<T>
+	/// <typeparam name="TId">Type of node identifier.</typeparam>
+	public class Kosaraju<TId>
 	{
-		private readonly Dictionary<T, KosarajuNode> _graph;
+		private readonly Dictionary<TId, KosarajuNode> _graph;
 		private int _currentTraversalOrder;
 		private KosarajuNode _currentLeader;
 
 		/// <summary>
 		/// Creates a new algorithm instance.
 		/// </summary>
-		public Kosaraju(Dictionary<T, DigraphNode<T>> graph)
+		public Kosaraju(Dictionary<TId, DigraphNode<TId, object>> graph)
 		{
-			_graph = graph.ToDictionary(x => x.Key, x => new KosarajuNode(x.Value));
+			_graph = new Dictionary<TId, KosarajuNode>();
+			foreach (var pair in graph) {
+				_graph.Add(pair.Key, new KosarajuNode(pair.Value, _graph));
+			}
 		}
 
 		/// <summary>
@@ -32,7 +36,7 @@ namespace NAlgo.Graphs.Algorithms
 		/// where the keys are the leader nodes, and the values are the nodes
 		/// in the corresponding connected component.
 		/// </summary>
-		public Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GetConnectedComponents()
+		public Dictionary<DigraphNode<TId, object>, List<DigraphNode<TId, object>>> GetConnectedComponents()
 		{
 			_currentTraversalOrder = _graph.Count;
 			
@@ -49,38 +53,26 @@ namespace NAlgo.Graphs.Algorithms
 		{
 			foreach (var node in _graph.Values) {
 				node.IsExplored = false;
+				node.TraversalDirection = direction;
 			}
 
-			var nodes = _graph.Values.OrderBy(x => x.TraversalOrder).Where(x => !x.IsExplored);
-			foreach (var node in nodes) {
+			var dfs = new DepthFirstSearch<TId, object>();
+			foreach (var node in _graph.Values.OrderBy(x => x.TraversalOrder).Where(x => !x.IsExplored)) {
 				_currentLeader = node;
-				DepthFirstSearch(node, direction);
+				dfs.Run(node, x => {
+					((KosarajuNode)x).Leader = _currentLeader;
+					((KosarajuNode)x).TraversalOrder = _currentTraversalOrder--;
+				});
 			}
 		}
 
-		private void DepthFirstSearch(KosarajuNode root, Direction direction)
+		private Dictionary<DigraphNode<TId, object>, List<DigraphNode<TId, object>>> GroupNodesByLeader()
 		{
-			var search = new DepthFirstSearch<T>();
-			search.Run(root, x => GetUnexploredChildren(x, direction), (x) => {
-				var node = (KosarajuNode)x; 
-				node.Leader = _currentLeader;
-				node.TraversalOrder = _currentTraversalOrder--;
-			});
-		}
-
-		private IEnumerable<Node<T>> GetUnexploredChildren(Node<T> node, Direction direction)
-		{
-			var nodes = (direction == Direction.Reverse) ? ((KosarajuNode)node).Incoming : ((KosarajuNode)node).Outgoing;
-			return nodes.Select(x => _graph[x]).Where(x => !x.IsExplored);
-		}
-
-		private Dictionary<DigraphNode<T>, List<DigraphNode<T>>> GroupNodesByLeader()
-		{
-			var result = new Dictionary<DigraphNode<T>, List<DigraphNode<T>>>();
+			var result = new Dictionary<DigraphNode<TId, object>, List<DigraphNode<TId, object>>>();
 			foreach (var node in _graph.Values) {
 				var leader = node.Leader;
 				if (!result.ContainsKey(leader)) {
-					result.Add(leader, new List<DigraphNode<T>>());
+					result.Add(leader, new List<DigraphNode<TId, object>>());
 				}
 				result[leader].Add(node);
 			}
@@ -93,31 +85,30 @@ namespace NAlgo.Graphs.Algorithms
 			Forward = 1
 		}
 
-		private class KosarajuNode : DigraphNode<T>
+		private class KosarajuNode : DigraphNode<TId, object>
 		{
 			internal int TraversalOrder { get; set; }
+			internal Direction TraversalDirection { get; set; }
 			internal KosarajuNode Leader { get; set; }
 
-			internal KosarajuNode(DigraphNode<T> node)
-				: base(node.Id)
+			internal KosarajuNode(DigraphNode<TId, object> node, Dictionary<TId, KosarajuNode> graph)
+				: base(node.Id, graph)
 			{
 				Leader = null;
-				TraversalOrder = ConvertToInt(node.Id);
+				TraversalOrder = GetInitialTraversalOrder(node.Id);
 				Incoming.AddRange(node.Incoming);
 				Outgoing.AddRange(node.Outgoing);
 			}
 
-			internal IEnumerable<KosarajuNode> GetUnexploredChildren(Dictionary<T, KosarajuNode> nodes, Direction direction)
+			public override IEnumerable<Node<TId, object>> GetUnexploredChildren()
 			{
-				return (direction == Direction.Reverse ? Incoming : Outgoing).Select(x => nodes[x]).Where(x => !x.IsExplored);
+				var source = (TraversalDirection == Direction.Reverse) ? Incoming : Outgoing;
+				return source.Select(x => ((Dictionary<TId, KosarajuNode>)Graph)[x]).Where(x => !x.IsExplored);
 			}
 
-			private static int ConvertToInt(T id)
+			private static int GetInitialTraversalOrder(TId id)
 			{
-				if (typeof(T) == typeof(int)) {
-					return Convert.ToInt32(id);
-				}
-				return id.GetHashCode();
+				return (typeof(TId) == typeof(int)) ? Convert.ToInt32(id) : id.GetHashCode();
 			}
 		}
 	}

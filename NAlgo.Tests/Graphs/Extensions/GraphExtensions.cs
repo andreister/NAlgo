@@ -6,14 +6,14 @@ namespace NAlgo.Tests.Graphs.Extensions
 {
 	internal static class GraphExtensions
 	{
-		internal static Dictionary<T, DigraphNode<T>> ToDirectedGraph<T>(this string graphText)
+		internal static Dictionary<TId, DigraphNode<TId, TValue>> ToDirectedGraph<TId, TValue>(this string graphText)
 		{
-			var graph = new Dictionary<T, DigraphNode<T>>();
+			var graph = new Dictionary<TId, DigraphNode<TId, TValue>>();
 
 			foreach (var edge in graphText.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)) {
-				var nodes = edge.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-				T fromId;
-				T toId;
+				var nodes = edge.Trim().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+				TId fromId;
+				TId toId;
 				if (nodes.Length != 2 || !TryContvert(nodes[0], out fromId) || !TryContvert(nodes[1], out toId)) {
 					throw new ArgumentException("Invalid input for an edge: " + edge);
 				}
@@ -24,14 +24,14 @@ namespace NAlgo.Tests.Graphs.Extensions
 			return graph;
 		}
 
-		internal static Dictionary<T, GraphNode<T>> ToGraph<T>(this string graphText)
+		internal static Dictionary<TId, GraphNode<TId, TValue>> ToGraph<TId, TValue>(this string graphText)
 		{
-			var graph = new Dictionary<T, GraphNode<T>>();
+			var graph = new Dictionary<TId, GraphNode<TId, TValue>>();
 
 			foreach (var edge in graphText.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)) {
 				var nodes = edge.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-				T fromId;
-				T toId;
+				TId fromId;
+				TId toId;
 				if (nodes.Length != 2 || !TryContvert(nodes[0], out fromId) || !TryContvert(nodes[1], out toId)) {
 					throw new ArgumentException("Invalid input for an edge: " + edge);
 				}
@@ -41,18 +41,18 @@ namespace NAlgo.Tests.Graphs.Extensions
 			return graph;
 		}
 
-		private static DigraphNode<T> AddNode<T>(Dictionary<T, DigraphNode<T>> graph, T id)
+		private static DigraphNode<TId, TValue> AddNode<TId, TValue>(Dictionary<TId, DigraphNode<TId, TValue>> graph, TId id)
 		{
 			if (!graph.ContainsKey(id)) {
-				graph.Add(id, new DigraphNode<T>(id));
+				graph.Add(id, new DigraphNode<TId, TValue>(id, graph));
 			}
 			return graph[id];
 		}
-		
-		private static GraphNode<T> AddNode<T>(Dictionary<T, GraphNode<T>> graph, T id)
+
+		private static GraphNode<TId, TValue> AddNode<TId, TValue>(Dictionary<TId, GraphNode<TId, TValue>> graph, TId id)
 		{
 			if (!graph.ContainsKey(id)) {
-				graph.Add(id, new GraphNode<T>(id));
+				graph.Add(id, new GraphNode<TId, TValue>(id, graph));
 			}
 			return graph[id];
 		}
