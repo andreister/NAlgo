@@ -49,6 +49,7 @@
     <Compile Include="Graphs\GraphNode.cs" />
     <Compile Include="Graphs\Node`1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\LocalitySensitiveSearch.cs" />
     <Compile Include="Text\SimilarityChecker.cs" />
   </ItemGroup>
   <ItemGroup />

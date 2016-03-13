@@ -51,6 +51,7 @@
     <Compile Include="Graphs\ShortestPathTests.cs" />
     <Compile Include="Graphs\TopologicalSortTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\LocalitySensitiveSearchTests.cs" />
     <Compile Include="Text\SimilarityCheckerTests.cs" />
   </ItemGroup>
   <ItemGroup>
