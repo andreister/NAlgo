@@ -12,12 +12,12 @@ namespace NAlgo.Text
     /// </summary>
     public class LocalitySensitiveSearch
     {
-        private readonly List<Func<int, int>> _hashFunctions;
+        private readonly List<Func<int, uint>> _hashFunctions;
         private readonly int _wordsPerShingle;
 
         public LocalitySensitiveSearch(int permutationsCount = 100, int wordsPerShingle = 3, int seed = 123)
         {
-            _hashFunctions = new List<Func<int, int>>(permutationsCount);
+            _hashFunctions = new List<Func<int, uint>>(permutationsCount);
             _wordsPerShingle = wordsPerShingle;
 
             var random = new Random(seed);
@@ -27,20 +27,20 @@ namespace NAlgo.Text
                 var b = (uint)random.Next(1000);    //random
                 var c = (uint)2147483647;           //prime number
                 _hashFunctions.Add((x) => {
-                    return (int)((a * x + b) % c);
+                    return (uint)((a * x + b) % c);
                 });
             }
         }
 
         public DocumentSignature GetSignature(long documentId, string text)
         {
-            var result = new int[_hashFunctions.Count];
+            var result = new uint[_hashFunctions.Count];
 
             var cleanedText = Cleanup(text);
             var shingles = GetShingles(cleanedText);
 
             for (var functionId = 0; functionId < _hashFunctions.Count; functionId++) {
-                var minHash = int.MaxValue;
+                var minHash = uint.MaxValue;
                 for (var shingleId = 0; shingleId < shingles.Count; shingleId++) {
                     var shingleHash = shingles[shingleId].Hash;
                     var randomHash = _hashFunctions[functionId](shingleHash);
@@ -99,9 +99,9 @@ namespace NAlgo.Text
         public class DocumentSignature
         {
             private long _documentId;
-            private int[] _minhashVector;
+            private uint[] _minhashVector;
 
-            public DocumentSignature(long documentId, int[] minhashVector)
+            public DocumentSignature(long documentId, uint[] minhashVector)
             {
                 _documentId = documentId;
                 _minhashVector = minhashVector;
@@ -125,6 +125,11 @@ namespace NAlgo.Text
                 }
 
                 return result.ToArray();
+            }
+
+            public override string ToString()
+            {
+                return string.Join(":", _minhashVector);
             }
         }
 
