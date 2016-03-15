@@ -18,8 +18,8 @@ namespace NAlgo.Tests.Text
 
             var similarities = signature1.GetSimilarity(signature1, signature2);
 
-            Assert.That(similarities[0], Is.EqualTo(1), "Text should have 100% similarity with itself");
-            Assert.That(similarities[1], Is.AtLeast(0.2), "LHS should estimate high enough similarity for similar documents");
+            Assert.That(similarities[0], Is.EqualTo(1m), "Text should have 100% similarity with itself");
+            Assert.That(similarities[1], Is.AtLeast(0.29m), "LHS should estimate high enough similarity for similar documents");
         }
     }
 }
